@@ -1,9 +1,8 @@
 app.controller('PlayerCtrl', function($scope, $rootScope, PlayerFactory){
-
-  // state variables
-  $scope.currentSong;
-
   // main toggle
+
+  $scope.currentSong = PlayerFactory.getCurrentSong();
+
   $scope.toggle = function (song) {
     if (PlayerFactory.isPlaying()) $rootScope.$broadcast('pause');
     else $rootScope.$broadcast('play', song);
@@ -20,11 +19,11 @@ app.controller('PlayerCtrl', function($scope, $rootScope, PlayerFactory){
 
   function play (event, song){
     PlayerFactory.pause();
+    console.log('Play Song', song);
     if(song === $scope.currentSong){
       return PlayerFactory.resume();
     }
     PlayerFactory.start(song);
-    $scope.currentSong = song;
   }
 
   // outgoing events (to Album)

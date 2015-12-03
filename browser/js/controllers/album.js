@@ -1,5 +1,5 @@
 app.controller('AlbumCtrl', function($scope, $http, StatsFactory, PlayerFactory, $rootScope) {
-
+  $scope.currentSong = PlayerFactory.getCurrentSong();
   // load our initial data
   $http.get('/api/albums/')
   .then(res => $http.get('/api/albums/' + res.data[1]._id))
@@ -15,7 +15,6 @@ app.controller('AlbumCtrl', function($scope, $http, StatsFactory, PlayerFactory,
         $scope.fullDuration = albumDuration;
     });
   }).catch(console.error.bind(console));
-
   // main toggle
   $scope.toggle = function (song) {
     if (PlayerFactory.isPlaying()) $rootScope.$broadcast('pause');
@@ -38,7 +37,6 @@ app.controller('AlbumCtrl', function($scope, $http, StatsFactory, PlayerFactory,
       return PlayerFactory.resume();
     }
     PlayerFactory.start(song);
-    $scope.currentSong = song;
   };
 
   // a "true" modulo that wraps negative to the top of the range
@@ -46,8 +44,8 @@ app.controller('AlbumCtrl', function($scope, $http, StatsFactory, PlayerFactory,
 
   // jump `val` spots in album (negative to go back)
   function skip (val) {
-    if (!$scope.currentSong) return;
-    var idx = $scope.album.songs.indexOf($scope.currentSong);
+    if (!PlayerFactory.getCurrentSong()) return;
+    var idx = $scope.album.songs.indexOf(PlayerFactory.getCurrentSong());
     idx = mod( (idx + (val || 1)), $scope.album.songs.length );
     $rootScope.$broadcast('play', $scope.album.songs[idx]);
   };
