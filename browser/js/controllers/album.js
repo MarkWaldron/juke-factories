@@ -1,4 +1,4 @@
-app.controller('AlbumCtrl', function($scope, $http, $rootScope) {
+app.controller('AlbumCtrl', function($scope, $http, StatsFactory, PlayerFactory, $rootScope) {
 
   // load our initial data
   $http.get('/api/albums/')
@@ -10,11 +10,15 @@ app.controller('AlbumCtrl', function($scope, $http, $rootScope) {
       song.audioUrl = '/api/songs/' + song._id + '.audio';
     });
     $scope.album = album;
+    StatsFactory.totalTime(album)
+    .then(function (albumDuration) {
+        $scope.fullDuration = albumDuration;
+    });
   }).catch(console.error.bind(console));
 
   // main toggle
   $scope.toggle = function (song) {
-    if ($scope.playing) $rootScope.$broadcast('pause');
+    if (PlayerFactory.isPlaying()) $rootScope.$broadcast('pause');
     else $rootScope.$broadcast('play', song);
   }
 
@@ -26,10 +30,14 @@ app.controller('AlbumCtrl', function($scope, $http, $rootScope) {
 
   // functionality
   function pause () {
-    $scope.playing = false;
+    PlayerFactory.pause();
   }
   function play (event, song){
-    $scope.playing = true;
+    PlayerFactory.pause();
+    if(song === $scope.currentSong){
+      return PlayerFactory.resume();
+    }
+    PlayerFactory.start(song);
     $scope.currentSong = song;
   };
 
