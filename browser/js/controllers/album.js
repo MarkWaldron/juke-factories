@@ -1,5 +1,4 @@
 app.controller('AlbumCtrl', function($scope, $http, StatsFactory, PlayerFactory, $rootScope) {
-  $scope.currentSong = PlayerFactory.getCurrentSong();
   // load our initial data
   $http.get('/api/albums/')
   .then(res => $http.get('/api/albums/' + res.data[1]._id))
@@ -17,8 +16,11 @@ app.controller('AlbumCtrl', function($scope, $http, StatsFactory, PlayerFactory,
   }).catch(console.error.bind(console));
   // main toggle
   $scope.toggle = function (song) {
-    if (PlayerFactory.isPlaying()) $rootScope.$broadcast('pause');
-    else $rootScope.$broadcast('play', song);
+    if (PlayerFactory.isPlaying()){$rootScope.$broadcast('pause');
+  }
+    else {
+      $rootScope.$broadcast('play', song);
+  }
   }
 
   // incoming events (from Player, toggle, or skip)
@@ -33,9 +35,11 @@ app.controller('AlbumCtrl', function($scope, $http, StatsFactory, PlayerFactory,
   }
   function play (event, song){
     PlayerFactory.pause();
-    if(song === $scope.currentSong){
+    if(song == PlayerFactory.getCurrentSong()){
+
       return PlayerFactory.resume();
     }
+    PlayerFactory.setCurrentSong(song);
     PlayerFactory.start(song);
   };
 

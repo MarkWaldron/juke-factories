@@ -19,11 +19,12 @@ app.factory('PlayerFactory', function ($q, $rootScope) {
 
   // start the damn song
   playerObj.start = function(song){
-    this.setCurrentSong(song);
+    playerObj.setCurrentSong(song);
     audio.src = song.audioUrl;
     audio.load();
     audio.play();
     playing = true;
+
     return;
   };
 
@@ -41,12 +42,12 @@ app.factory('PlayerFactory', function ($q, $rootScope) {
     return playing;
   };
 
-  playerObj.getCurrentSong = function(){
-    return currentSong;
-  };
-
   playerObj.setCurrentSong = function(song){
     currentSong = song;
+  };
+  
+  playerObj.getCurrentSong = function(){
+    return currentSong;
   };
 
   playerObj.next = function(){
